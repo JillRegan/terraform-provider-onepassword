@@ -13,7 +13,7 @@ jobs:
       - name: Download dependency graph SBOM
         run: |
           curl -sS -f \
-            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -o sbom.json \
