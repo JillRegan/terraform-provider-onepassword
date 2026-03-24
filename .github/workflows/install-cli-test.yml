@@ -1,0 +1,11 @@
+name: install-cli-action smoke test
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  try:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 1Password/install-cli-action@jill/fix-vulnerabilities
+      - run: op --version
