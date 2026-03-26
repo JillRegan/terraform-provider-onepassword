@@ -7,5 +7,6 @@ jobs:
   try:
     runs-on: ubuntu-latest
     steps:
-      - uses: 1Password/install-cli-action@jill/fix-vulnerabilities
+      - uses: 1Password/install-cli-action@release/v3.0.0
       - run: op --version
+      - run: op --help
