@@ -29,7 +29,7 @@ jobs:
 
       - name: Run pre-fix action from base repo main
         id: repro
-        uses: 1Password/load-secrets-action@2a9101f21de4fcc2ae46583a248b43d50ad0476a
+        uses: superteppo/load-secrets-action@080cd2d3be81ab40f269b8f3e54e98a2f7cdd6f6
         with:
           export-env: false
         env:
