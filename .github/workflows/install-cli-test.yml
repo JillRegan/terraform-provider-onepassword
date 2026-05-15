@@ -1,12 +1,40 @@
-name: install-cli-action smoke test
+name: reproduce-load-secrets-windows-zip-bug
+
 on:
   workflow_dispatch:
-  push:
 
 jobs:
-  try:
-    runs-on: ubuntu-latest
+  repro:
+    runs-on: windows-latest
+
     steps:
-      - uses: 1Password/install-cli-action@release/v3.0.0
-      - run: op --version
-      - run: op --help
+      - uses: actions/checkout@v4
+
+      - name: Show available shells
+        shell: pwsh
+        run: |
+          Write-Host "pwsh path:"
+          Get-Command pwsh -ErrorAction SilentlyContinue | Format-List *
+          Write-Host "powershell path:"
+          Get-Command powershell -ErrorAction SilentlyContinue | Format-List *
+
+      # Best-effort attempt to make pwsh unavailable to child process lookup.
+      # This may or may not be enough depending on how @actions/tool-cache resolves executables.
+      - name: Remove pwsh from PATH for later steps
+        shell: pwsh
+        run: |
+          $segments = $env:PATH -split ';' | Where-Object { $_ -and ($_ -notmatch 'PowerShell\\7') -and ($_ -notmatch 'pwsh') }
+          "PATH=$($segments -join ';')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Run pre-fix action from base repo main
+        id: repro
+        uses: 1Password/load-secrets-action@2a9101f21de4fcc2ae46583a248b43d50ad0476a
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+      - name: Verify CLI installed
+        shell: powershell
+        run: |
+          op --version
