@@ -1,6 +1,7 @@
 name: reproduce-load-secrets-windows-zip-bug
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
