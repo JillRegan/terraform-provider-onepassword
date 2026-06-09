@@ -1,0 +1,23 @@
+name: Test install-cli-action release
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  install-cli:
+    name: Install on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install 1Password CLI (release/v4.0.0)
+        uses: 1password/install-cli-action@release/v4.0.0
+
+      - name: Verify CLI installed
+        run: op --version
