@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  install-cli:
-    name: Install on ${{ matrix.os }}
+  install-cli-then-load-secrets:
+    name: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -16,8 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install 1Password CLI (release/v4.0.0)
+      - name: Install 1Password CLI (install-cli-action)
         uses: 1password/install-cli-action@release/v4.0.0
 
       - name: Verify CLI installed
         run: op --version
+
+      - name: Load secrets (fake token — test CLI skip-reinstall)
+        uses: 1password/load-secrets-action@v4
+        continue-on-error: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: fake-token-for-testing
