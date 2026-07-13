@@ -18,6 +18,8 @@ jobs:
 
       - name: Install 1Password CLI (install-cli-action)
         uses: 1password/install-cli-action@v3
+        with:
+          version: latest-beta
 
       - name: Verify CLI installed
         run: op --version
