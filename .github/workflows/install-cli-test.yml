@@ -1,0 +1,32 @@
+name: Windows smoke test
+
+on:
+  push:
+  workflow_dispatch:
+
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+
+    steps:
+      - name: Run load-secrets-action
+        id: load-secrets
+        uses: superteppo/load-secrets-action@080cd2d3be81ab40f269b8f3e54e98a2f7cdd6f6
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          SECRET: op://${{ secrets.VAULT }}/test-secret/password
+
+      - name: Verify CLI installed
+        shell: powershell
+        run: |
+          op --version
+
+      - name: Verify secret output exists
+        shell: powershell
+        run: |
+          if ("${{ steps.load-secrets.outputs.SECRET }}" -eq "") {
+            throw "Expected SECRET output to be set"
+          }
