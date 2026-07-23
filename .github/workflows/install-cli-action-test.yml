@@ -27,3 +27,33 @@ jobs:
         continue-on-error: true
         env:
           OP_SERVICE_ACCOUNT_TOKEN: fake-token-for-testing
+
+  load-secrets-only:
+    name: load-secrets-only (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Ensure CLI is not present
+        shell: bash
+        run: |
+          if command -v op >/dev/null 2>&1; then
+            echo "op unexpectedly already installed at $(command -v op)"
+            op --version
+          else
+            echo "op not installed (expected)"
+          fi
+
+      - name: Load secrets (fake token — test CLI auto-download)
+        uses: 1password/load-secrets-action@v4
+        continue-on-error: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: fake-token-for-testing
+
+      - name: Verify CLI was downloaded by load-secrets-action
+        run: op --version
